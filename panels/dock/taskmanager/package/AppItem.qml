@@ -15,6 +15,7 @@ Item {
     required property int displayMode
     required property int colorTheme
     required property bool active
+    required property bool attention
     required property string itemId
     required property string name
     required property string iconName
@@ -47,11 +48,33 @@ Item {
         }
 
         StatusIndicator {
+            id: statusIndicator
             palette: itemPalette
             width: root.statusIndicatorSize
             height: root.statusIndicatorSize
             anchors.centerIn: parent
             visible: root.displayMode === Dock.Efficient && root.windows.length > 0
+
+            SequentialAnimation {
+                loops: Animation.Infinite
+                running: root.attention
+                PropertyAnimation {
+                    target: statusIndicator
+                    property: "color"
+                    from: statusIndicator.palette.rectIndicator
+                    to: "#CCF18A2E"
+                    duration: 1000
+                    easing.type: Easing.OutCubic
+                }
+                PropertyAnimation {
+                    target: statusIndicator
+                    property: "color"
+                    from: "#CCF18A2E"
+                    to: statusIndicator.palette.rectIndicator
+                    duration: 1000
+                    easing.type: Easing.InCubic
+                }
+            }
         }
 
         WindowIndicator {
@@ -87,6 +110,124 @@ Item {
             name: root.iconName
             sourceSize: Qt.size(iconSize, iconSize)
             anchors.centerIn: parent
+
+            SequentialAnimation {
+                id: beatAnimation
+                loops: Animation.Infinite
+                running: root.attention && root.displayMode === Dock.Fashion
+                PropertyAnimation {
+                    target: icon
+                    property: "scale"
+                    from: 1
+                    to: 1.3
+                    duration: 150
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "scale"
+                    from: 1.3
+                    to: 1
+                    duration: 150
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "scale"
+                    from: 1
+                    to: 1.2
+                    duration: 100
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "scale"
+                    from: 1.2
+                    to: 1
+                    duration: 100
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "scale"
+                    from: 1
+                    to: 1.1
+                    duration: 100
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "scale"
+                    from: 1.1
+                    to: 1
+                    duration: 100
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "scale"
+                    from: 1
+                    to: 1
+                    duration: 1000
+                }
+                onStopped: icon.scale = 1
+                onFinished: loops = Animation.Infinite
+            }
+            SequentialAnimation {
+                id: launchAnimation
+                loops: 1
+                running: false
+                property int y: 0
+                PropertyAnimation {
+                    target: icon
+                    property: "y"
+                    from: icon.y
+                    to: icon.y - height * 0.15
+                    duration: 60
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "y"
+                    from: icon.y - height * 0.15
+                    to: icon.y - height * 0.05
+                    duration: 60
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "y"
+                    from: icon.y - height * 0.05
+                    to: icon.y - height * 0.15
+                    duration: 60
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "y"
+                    from: icon.y - height * 0.15
+                    to: icon.y - height * 0.10
+                    duration: 60
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "y"
+                    from: icon.y - height * 0.10
+                    to: icon.y - height * 0.15
+                    duration: 60
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "y"
+                    from: icon.y - height * 0.15
+                    to: icon.y - height * 0.15
+                    duration: 500
+                }
+                PropertyAnimation {
+                    target: icon
+                    property: "y"
+                    from: icon.y - height * 0.15
+                    to: icon.y
+                    duration: 60
+                }
+                onStarted: {
+                    icon.anchors.centerIn = null
+                }
+                onStopped: {
+                    icon.anchors.centerIn = appItem
+                }
+            }
         }
     }
 
@@ -107,6 +248,9 @@ Item {
             if (mouse.button === Qt.RightButton) {
                 MenuHelper.openMenu(contextMenu)
             } else {
+                if (root.windows.length === 0) {
+                    launchAnimation.start()
+                }
                 root.clickItem(root.itemId, "")
             }
         }

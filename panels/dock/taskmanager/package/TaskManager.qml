@@ -34,6 +34,7 @@ AppletItem {
             delegate: DropArea {
                 id: delegateRoot
                 required property bool active
+                required property bool attention
                 required property string itemId
                 required property string name
                 required property string iconName
@@ -59,6 +60,7 @@ AppletItem {
                     displayMode: taskmanager.Applet.parent.displayMode
                     colorTheme: taskmanager.Applet.parent.colorTheme
                     active: delegateRoot.active
+                    attention: delegateRoot.attention
                     itemId: delegateRoot.itemId
                     name: delegateRoot.name
                     iconName: delegateRoot.iconName
@@ -72,5 +74,28 @@ AppletItem {
                 }
             }
         }
+
+        // Rectangle {
+        //     id: iconBackground
+        //     anchors.centerIn: appContainer
+        //     width: dockSize+5; height: dockSize+5
+        //     z: appContainer.z - 1
+        //     // z: root.z - 2
+        //     // opacity: 0.3
+        //     scale: 10
+        //     visible: root.attention
+
+        //     Canvas {
+        //         anchors.fill: parent
+        //         onPaint: {
+        //             var ctx = getContext("2d");
+        //             ctx.fillStyle = Qt.rgba(1, 0, 0, 1);
+        //             // ctx.ellipse(100, 100, width, height);
+        //             ctx.globalAlpha = 0.5
+        //             ctx.fillRect(0, 0, width+100, height+100);
+        //             // ctx.scale(5, 5)
+        //         }
+        //     }
+        // }
     }
 }
